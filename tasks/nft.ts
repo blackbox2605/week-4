@@ -1,29 +1,25 @@
-import { task, types } from "hardhat/config";
-import { Contract } from "ethers";
-import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { env } from "../lib/env";
-import { getContract } from "../lib/contract";
-import { getWallet } from "../lib/wallet";
+import { task } from "hardhat/config";
+import { ethers } from "hardhat";
 
-task("deploy-contract", "Deploy NFT contract").setAction(async (_, hre) => {
-  return hre.ethers
-    .getContractFactory("MyNFT", getWallet())
-    .then((contractFactory) => contractFactory.deploy())
-    .then((result) => {
-      process.stdout.write(`Contract address: ${result.address}`);
-    });
-});
+// Task to deploy the NFT contract
+task("deploy-contract", "Deploys the NFT contract")
+  .setAction(async (_, hre) => {
+    const NFT = await hre.ethers.getContractFactory("MyNFT");
+    const nft = await NFT.deploy();
+    await nft.deployed();
+    console.log("NFT Contract deployed to:", nft.address);
+  });
 
-task("mint-nft", "Mint an NFT")
-  .addParam("tokenUri", "Your ERC721 Token URI", undefined, types.string)
-  .setAction(async (tokenUri, hre) => {
-    return getContract("MyNFT", hre)
-      .then((contract: Contract) => {
-        return contract.mintNFT(env("ETH_PUBLIC_KEY"), tokenUri, {
-          gasLimit: 500_000,
-        });
-      })
-      .then((tr: TransactionResponse) => {
-        process.stdout.write(`TX hash: ${tr.hash}`);
-      });
+// Task to mint an NFT
+task("mint-nft", "Mints an NFT")
+  .addParam("to", "The recipient address")
+  .addParam("tokenUri", "The token URI")
+  .setAction(async (taskArgs, hre) => {
+    const [deployer] = await hre.ethers.getSigners();
+    const nft = await hre.ethers.getContract("MyNFT", deployer.address);
+
+    const tx = await nft.createNFT(taskArgs.to, taskArgs.tokenUri);
+    await tx.wait();  // Wait for the transaction to be mined
+
+    console.log(`NFT minted to ${taskArgs.to} with URI: ${taskArgs.tokenUri}`);
   });

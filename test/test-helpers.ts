@@ -1,23 +1,20 @@
-// Note this require the NPM libraries imported, including sinon, chai, and sinon-chai. 
-// The sinon.restore() call is necessary due to the use of stubbing.
-import sinon from "sinon";
-import chai from "chai";
-import sinonChai from "sinon-chai";
-import { ethers as hardhatEthers, waffle } from "hardhat";
-import { Contract, Wallet } from "ethers";
+// import { ethers } from "hardhat";
+// import { MyNFT } from "../typechain/MyNFT"; // Adjust the import path based on your typechain settings
 
-chai.use(sinonChai);
+// // Function to deploy the MyNFT contract
+// export const deployMyNFT = async (): Promise<MyNFT> => {
+//   const MyNFTFactory = await ethers.getContractFactory("MyNFT");
+//   const myNFT = await MyNFTFactory.deploy();
+//   await myNFT.deployed();
+//   return myNFT;
+// };
 
-afterEach(() => {
-  sinon.restore();
-});
+// // Function to mint an NFT to a specific address
+// export const mintNFT = async (contract: MyNFT, recipient: string): Promise<void> => {
+//   const tx = await contract.mintNFT(recipient);
+//   await tx.wait(); // Wait for the transaction to be mined
+// };
 
-export function deployTestContract(name: string): Promise<Contract> {
-  return hardhatEthers
-    .getContractFactory(name, getTestWallet())
-    .then((contractFactory) => contractFactory.deploy());
-}
 
-export function getTestWallet(): Wallet {
-  return waffle.provider.getWallets()[0];
-}
+
+// Helper functions for tests

@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
+import { INFURA_PROJECT_ID } from "./env";
 
-export function getProvider(): ethers.providers.Provider {
-  return ethers.getDefaultProvider("ropsten", {
-    alchemy: process.env.ALCHEMY_API_KEY,
-  });
-}
+export const getProvider = () => {
+  return new ethers.providers.InfuraProvider("sepolia", INFURA_PROJECT_ID);
+};
